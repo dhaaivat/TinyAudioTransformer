@@ -61,3 +61,14 @@ class MiniSpeechCommandsMelDataset(Dataset):
         mel_spec = mel_spec[:, :128, :64]             # Ensure consistent shape
 
         return mel_spec, label
+from torch.utils.data import DataLoader
+
+def get_dataloaders(batch_size=32):
+    train_set = MiniSpeechCommandsMelDataset(split="train")
+    val_set = MiniSpeechCommandsMelDataset(split="val")
+
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_set, batch_size=batch_size)
+
+    return train_loader, val_loader
+
