@@ -7,7 +7,7 @@ from pathlib import Path
 from torchaudio.transforms import MelSpectrogram, AmplitudeToDB
 
 class MiniSpeechCommandsMelDataset(Dataset):
-    def __init__(self, root_dir="mini_speech_commands", split="train", sample_rate=16000, mel_bins=128):
+    def __init__(self, root_dir=DATASET_DIR, split="train", sample_rate=16000, mel_bins=128):
         self.root_dir = Path(root_dir)
         self.sample_rate = sample_rate
         self.mel_transform = MelSpectrogram(
