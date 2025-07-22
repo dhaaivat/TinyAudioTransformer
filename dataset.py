@@ -5,6 +5,22 @@ import torchaudio
 from torch.utils.data import Dataset
 from pathlib import Path
 from torchaudio.transforms import MelSpectrogram, AmplitudeToDB
+import torch.nn.functional as F
+
+DATASET_DIR = "/content/mini_speech_commands"
+def pad_or_trim(mel, max_frames=64):
+    """
+    Pads or trims mel spectrogram to have exactly `max_frames` in the time dimension.
+    mel shape: [1, n_mels, time]
+    """
+    time_dim = mel.shape[-1]
+    if time_dim < max_frames:
+        pad_amount = max_frames - time_dim
+        mel = F.pad(mel, (0, pad_amount))
+    else:
+        mel = mel[:, :, :max_frames]
+    return mel
+
 
 class MiniSpeechCommandsMelDataset(Dataset):
     def __init__(self, root_dir=DATASET_DIR, split="train", sample_rate=16000, mel_bins=128):
@@ -58,7 +74,7 @@ class MiniSpeechCommandsMelDataset(Dataset):
 
         mel_spec = self.mel_transform(waveform)      # → [1, mel_bins, time]
         mel_spec = self.db_transform(mel_spec)        # → log scale
-        mel_spec = mel_spec[:, :128, :64]             # Ensure consistent shape
+        mel_spec = pad_or_trim(mel_spec,max_frames=64)           # Ensure consistent shape
 
         return mel_spec, label
 from torch.utils.data import DataLoader
