@@ -67,4 +67,14 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     optimizer = Adam(model.parameters(), lr=1e-4)
 
-    train_model(model, train_loader, val_loader, criterion, optimizer, device=device)
+    train_model(
+    model,
+    train_loader,
+    val_loader,
+    criterion,
+    optimizer,
+    device=device,
+    num_epochs=50,
+    patience=7,      # wait max 7 epochs without improvement
+    delta=0.1)        # need at least 0.1% improvement
+
