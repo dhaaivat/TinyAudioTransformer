@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 import os
-
+from audio_augmentations import get_waveform_augmentations  
 def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler=None,
                 device='cuda', num_epochs=20, save_path='best_model.pth',
                 patience=5, delta=0.0, switch_epoch=6):
