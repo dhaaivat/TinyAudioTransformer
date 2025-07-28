@@ -69,26 +69,9 @@ def evaluate_model(model, loader, device='cuda'):
     print(f"🔍 Validation Accuracy: {acc:.2f}%")
     return acc
   
-#CLI entry point
-if __name__ == "__main__":
-    from model import TinyAudioTransformer
-    from dataset import get_dataloaders  # your custom loaders
-    from torch.optim import Adam
+
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     train_loader, val_loader = get_dataloaders()
-    model = TinyAudioTransformer(num_classes=8)
-    criterion = nn.CrossEntropyLoss()
-    optimizer = Adam(model.parameters(), lr=1e-4)
-
-    train_model(
-    model,
-    train_loader,
-    val_loader,
-    criterion,
-    optimizer,
-    device=device,
-    num_epochs=50,
-    patience=7,      # wait max 7 epochs without improvement
-    delta=0.1)        # need at least 0.1% improvement
+    
 
