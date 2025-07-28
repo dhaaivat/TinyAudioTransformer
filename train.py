@@ -39,20 +39,20 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
             best_model_state = model.state_dict()
             epochs_no_improve = 0
             torch.save(best_model_state, save_path)
-            print(f"✅ Saved new best model (val acc: {val_acc:.2f}%)")
+            print(f" Saved new best model (val acc: {val_acc:.2f}%)")
         else:
             epochs_no_improve += 1
-            print(f"⚠️ No improvement for {epochs_no_improve} epoch(s)")
+            print(f" No improvement for {epochs_no_improve} epoch(s)")
 
         if scheduler:
             scheduler.step()
 
         # Early stopping check
         if epochs_no_improve >= patience:
-            print(f"\n🛑 Early stopping at epoch {epoch+1}")
+            print(f"\n Early stopping at epoch {epoch+1}")
             break
 
-    print(f"\n🎯 Training complete. Best Val Accuracy: {best_val_acc:.2f}%")
+    print(f"\n Training complete. Best Val Accuracy: {best_val_acc:.2f}%")
     return best_val_acc
 
 # Optional CLI entry point
