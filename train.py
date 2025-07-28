@@ -54,8 +54,22 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
 
     print(f"\n Training complete. Best Val Accuracy: {best_val_acc:.2f}%")
     return best_val_acc
-
-# Optional CLI entry point
+                  
+def evaluate_model(model, loader, device='cuda'):
+    model.eval()
+    correct, total = 0, 0
+    with torch.no_grad():
+        for x, y in loader:
+            x, y = x.to(device), y.to(device)
+            outputs = model(x)
+            preds = outputs.argmax(dim=1)
+            correct += (preds == y).sum().item()
+            total += y.size(0)
+    acc = 100. * correct / total
+    print(f"🔍 Validation Accuracy: {acc:.2f}%")
+    return acc
+  
+#CLI entry point
 if __name__ == "__main__":
     from model import TinyAudioTransformer
     from dataset import get_dataloaders  # your custom loaders
