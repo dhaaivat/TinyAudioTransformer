@@ -47,5 +47,7 @@ class TinyAudioTransformer(nn.Module):
         x = self.norm(x)
 
         cls_output = x[:, 0]  # use CLS token output
-        logits = self.head(cls_output)
+        mean_output = x.mean(dim=1)
+        x = cls_output + mean_output
+        logits = self.head(x)
         return logits
