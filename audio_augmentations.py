@@ -1,6 +1,5 @@
-
-
 from torch_audiomentations import Compose, Gain, PolarityInversion, Shift, AddBackgroundNoise
+background_path="/content/background_noise"
 
 def get_waveform_augmentations(sample_rate: int = 16000, noise_dir=background_path):
     augment = Compose(
