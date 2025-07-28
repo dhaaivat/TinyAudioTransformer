@@ -3,9 +3,14 @@ import torch.nn as nn
 from tqdm import tqdm
 import os
 
-def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler=None, device='cuda', num_epochs=20, save_path='best_model.pth'):
+def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler=None,
+                device='cuda', num_epochs=20, save_path='best_model.pth',
+                patience=5, delta=0.0):
+    
     model.to(device)
     best_val_acc = 0.0
+    best_model_state = None
+    epochs_no_improve = 0
 
     for epoch in range(num_epochs):
         model.train()
@@ -24,36 +29,31 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
             preds = outputs.argmax(dim=1)
             correct += (preds == y).sum().item()
             total += y.size(0)
-
             loop.set_postfix(loss=loss.item(), acc=100. * correct / total)
 
         val_acc = evaluate_model(model, val_loader, device)
 
-        # Save best model
-        if val_acc > best_val_acc:
+        # Check for improvement
+        if val_acc > best_val_acc + delta:
             best_val_acc = val_acc
-            torch.save(model.state_dict(), save_path)
-            print(f" Saved best model with val acc: {val_acc:.2f}%")
+            best_model_state = model.state_dict()
+            epochs_no_improve = 0
+            torch.save(best_model_state, save_path)
+            print(f"✅ Saved new best model (val acc: {val_acc:.2f}%)")
+        else:
+            epochs_no_improve += 1
+            print(f"⚠️ No improvement for {epochs_no_improve} epoch(s)")
 
         if scheduler:
             scheduler.step()
 
-    print(f"\n Training complete. Best Val Accuracy: {best_val_acc:.2f}%")
-    return best_val_acc
+        # Early stopping check
+        if epochs_no_improve >= patience:
+            print(f"\n🛑 Early stopping at epoch {epoch+1}")
+            break
 
-def evaluate_model(model, loader, device='cuda'):
-    model.eval()
-    correct, total = 0, 0
-    with torch.no_grad():
-        for x, y in loader:
-            x, y = x.to(device), y.to(device)
-            outputs = model(x)
-            preds = outputs.argmax(dim=1)
-            correct += (preds == y).sum().item()
-            total += y.size(0)
-    acc = 100. * correct / total
-    print(f"🔍 Validation Accuracy: {acc:.2f}%")
-    return acc
+    print(f"\n🎯 Training complete. Best Val Accuracy: {best_val_acc:.2f}%")
+    return best_val_acc
 
 # Optional CLI entry point
 if __name__ == "__main__":
