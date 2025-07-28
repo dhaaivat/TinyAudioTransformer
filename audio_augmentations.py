@@ -15,7 +15,7 @@ def get_waveform_augmentations(sample_rate: int = 16000):
             ),
             # ApplyImpulseResponse(impulse_response_paths=..., p=0.3), # Optional
         ],
-        p=1.0,
+        p=0.5,
         sample_rate=sample_rate,
         # device="cuda" will automatically use GPU if available
     )
