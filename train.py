@@ -5,7 +5,7 @@ import os
 
 def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler=None,
                 device='cuda', num_epochs=20, save_path='best_model.pth',
-                patience=5, delta=0.0):
+                patience=5, delta=0.0, switch_epoch=6):
     
     model.to(device)
     best_val_acc = 0.0
@@ -13,6 +13,15 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
     epochs_no_improve = 0
 
     for epoch in range(num_epochs):
+        # Warm start logic: activate augmentations after `switch_epoch`
+        if epoch == switch_epoch:
+            print(f"[INFO] Switching to augmented data from epoch {epoch+1} onwards...")
+            if hasattr(train_loader.dataset, "augment"):
+                train_loader.dataset.augment = True
+                train_loader.dataset.waveform_augment = get_waveform_augmentations(
+                    sample_rate=train_loader.dataset.sample_rate
+                )
+
         model.train()
         total_loss, correct, total = 0.0, 0, 0
         loop = tqdm(train_loader, desc=f"Epoch [{epoch+1}/{num_epochs}]")
@@ -33,17 +42,17 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
 
         val_acc = evaluate_model(model, val_loader, device)
 
-        # Check for improvement
         if val_acc > best_val_acc + delta:
             best_val_acc = val_acc
             best_model_state = model.state_dict()
             epochs_no_improve = 0
             torch.save(best_model_state, save_path)
-            print(f" Saved new best model (val acc: {val_acc:.2f}%)")
         else:
             epochs_no_improve += 1
-            print(f" No improvement for {epochs_no_improve} epoch(s)")
-
+            if epochs_no_improve >= patience:
+                print(f"[Early Stopping] No improvement in {patience} epochs.")
+                break
+              
         if scheduler:
             scheduler.step()
 
