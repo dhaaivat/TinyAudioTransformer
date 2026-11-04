@@ -1,0 +1,8 @@
+torch>=2.5         # torch.onnx.export(dynamo=True) needs a recent torch
+numpy
+pytest
+transformers      # AST parity tests (reference weights from the Hugging Face Hub)
+torchaudio        # optional: only for the torchaudio-vs-ours fbank test
+onnx              # Phase 3 export (export_onnx.py, tests/test_export.py)
+onnxruntime
+onnxscript

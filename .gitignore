@@ -1,0 +1,15 @@
+# Python / OS
+__pycache__/
+.DS_Store
+
+# Data and training outputs (produced on Kaggle; too large for git)
+data/
+results/
+runs/
+runs_phase2/
+runs_phase2b/
+*.zip
+
+# Local datasets and old notebook exports
+mini_speech_commands/
+tinyaudiotransformer_kagglerun.ipynb

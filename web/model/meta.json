@@ -1,0 +1,62 @@
+{
+  "classes": [
+    "backward",
+    "bed",
+    "bird",
+    "cat",
+    "dog",
+    "down",
+    "eight",
+    "five",
+    "follow",
+    "forward",
+    "four",
+    "go",
+    "happy",
+    "house",
+    "learn",
+    "left",
+    "marvin",
+    "nine",
+    "no",
+    "off",
+    "on",
+    "one",
+    "right",
+    "seven",
+    "sheila",
+    "six",
+    "stop",
+    "three",
+    "tree",
+    "two",
+    "up",
+    "visual",
+    "wow",
+    "yes",
+    "zero"
+  ],
+  "sample_rate": 16000,
+  "clip_samples": 16000,
+  "input": "waveform [batch, 16000] float32 in [-1, 1]",
+  "outputs": {
+    "logits": "[batch, 35]",
+    "fbank": "[batch, 128 frames, 128 mel bins], log-mel before normalisation"
+  },
+  "checkpoint": "results/phase2b/runs_phase2b/tat_shift_specaug_noise_s0/best.pt",
+  "epoch": 28,
+  "val_acc": 94.25908923149109,
+  "parity": {
+    "random": {
+      "max_abs_logit_diff": 4.649162292480469e-06,
+      "argmax_agreement": 100.0,
+      "max_abs_fbank_diff": 0.00026702880859375
+    },
+    "real": {
+      "clips": 8000,
+      "max_abs_logit_diff": 2.7418136596679688e-05,
+      "argmax_agreement": 100.0,
+      "accuracy_not_a_benchmark": 94.875
+    }
+  }
+}

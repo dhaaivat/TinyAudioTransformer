@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TinyAudioTransformer</title>
+  <meta name="description" content="Say one of 35 words; a 0.85M-parameter transformer trained from scratch recognises it, entirely in your browser.">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.min.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+<main>
+  <header>
+    <h1>TinyAudioTransformer</h1>
+    <p class="lede">Say one of 35 words. A 0.85M-parameter transformer, trained from scratch on Speech Commands v2, recognises it <strong>in your browser</strong>. No audio leaves your device.</p>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-try" aria-selected="true">Try it</button>
+    <button role="tab" id="tab-test" aria-selected="false">Test it</button>
+  </nav>
+
+  <section id="panel-try" role="tabpanel">
+    <div class="controls">
+      <button id="record" class="primary" disabled>🎙 Record</button>
+      <label class="secondary" id="upload-label">Upload audio<input id="upload" type="file" accept="audio/*" disabled hidden></label>
+    </div>
+    <div class="meter" aria-hidden="true"><div id="progress"></div></div>
+    <p id="status" class="status" aria-live="polite">Loading model…</p>
+
+    <div id="result" class="card" hidden>
+      <div class="verdict"><span id="word"></span><span id="conf"></span></div>
+      <p id="note" class="note"></p>
+      <ol id="top5" class="bars"></ol>
+      <figure>
+        <canvas id="spec" width="384" height="256" aria-label="Log-mel spectrogram the model saw"></canvas>
+        <figcaption>What the model saw: log-mel spectrogram, time → (10 ms frames), pitch ↑. Right of the dashed line is zero padding (98 real frames, padded to 128).</figcaption>
+      </figure>
+      <button id="play" class="secondary">▶ Play the 1 s the model heard</button>
+    </div>
+  </section>
+
+  <section id="panel-test" role="tabpanel" hidden>
+    <p>Help measure how well the model works on <em>real</em> microphones. You'll be shown each of the 35 words once, in random order. Say it, and the page records whether the model got it right. Only the predictions are kept, never the audio. At the end you can download the results.</p>
+    <div class="card target-card">
+      <div class="label">Say:</div>
+      <div id="target" class="target">—</div>
+      <div class="controls">
+        <button id="t-record" class="primary" disabled>🎙 Record</button>
+        <button id="t-skip" class="secondary" disabled>Skip</button>
+      </div>
+      <div class="meter" aria-hidden="true"><div id="t-progress"></div></div>
+      <p id="t-feedback" class="status" aria-live="polite"></p>
+    </div>
+    <p id="t-score" class="score"></p>
+    <div class="controls">
+      <button id="t-start" class="secondary" disabled>Start a new round</button>
+      <button id="t-download" class="secondary" disabled>Download results (JSON)</button>
+    </div>
+    <table id="t-table" hidden>
+      <thead><tr><th>Said</th><th>Heard</th><th>Confidence</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="words">
+    <h2>The 35 words it knows</h2>
+    <div id="words" class="chips"></div>
+    <p class="note">It has no "unknown word" or "silence" class: anything you say gets mapped to its closest of these 35. Low confidence is the hint that it's guessing.</p>
+  </section>
+
+  <footer>
+    <h2>About the model</h2>
+    <p>4-layer transformer over 16×16 spectrogram patches (AST-style, 0.85M parameters), trained from scratch with time shift, SpecAugment and background-noise augmentation. On the official speaker-disjoint test set: <strong>93.4%</strong> on clean audio, <strong>88.1%</strong> with noise at 5 dB SNR, <strong>83.1%</strong> at 0 dB. Most confused: tree↔three, go→no, forward↔four.</p>
+    <p>The feature extraction (Kaldi log-mel filterbank) is part of the ONNX graph, so the browser computes exactly what training did. Exported outputs match PyTorch to within 3·10⁻⁵ on 8,000 real clips.</p>
+  </footer>
+</main>
+</body>
+</html>
