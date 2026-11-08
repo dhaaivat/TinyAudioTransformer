@@ -13,3 +13,8 @@ runs_phase2b/
 # Local datasets and old notebook exports
 mini_speech_commands/
 tinyaudiotransformer_kagglerun.ipynb
+
+# Local-only helpers and documents
+docs/make_architecture.py
+docs/make_figures.py
+TinyAudioTransformer_Concepts.docx

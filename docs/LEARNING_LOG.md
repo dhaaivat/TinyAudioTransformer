@@ -292,7 +292,7 @@ It records what the model is for and not for, the numbers (clean and noisy, per-
 
 ## Session 9 (2026-11-05): going live
 
-- **Repo:** the rebuilt project was pushed as one commit on top of the original July 2025 history, so nothing old is lost. Training outputs, datasets and zips stay out of git, and the site only needs `web/`. New: `README.md` (for both non-technical and technical readers, with figures from `docs/make_figures.py`) and an MIT `LICENSE`.
+- **Repo:** the rebuilt project was pushed as one commit on top of the original July 2025 history, so nothing old is lost. Training outputs, datasets and zips stay out of git, and the site only needs `web/`. New: `README.md` (for both non-technical and technical readers, with figures) and an MIT `LICENSE`.
 - **Caught before publishing:** the ONNX exporter embeds a Python stack trace in every graph node, including local file paths (username, folder layout). `export_onnx.py` now strips that debug info. The model shrank from 5.1 to 4.7 MB with identical outputs (re-verified on 8,000 clips).
   *Lesson:* look inside the artifacts you publish (`strings model.onnx | grep Users/`), not just at your source code.
 - **Hosting:** GitHub Pages, deployed by a GitHub Actions workflow from `web/`. The first deploy failed with "Get Pages site failed / Not Found" because Pages has to be switched on once in the repo (Settings → Pages → Source: GitHub Actions). After that, a manual re-run deployed it. Every push that touches `web/` now redeploys automatically, and the test suite runs on every push.
