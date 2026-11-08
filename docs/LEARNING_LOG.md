@@ -9,7 +9,7 @@ The goal is to build a keyword-spotting model from scratch in PyTorch and learn 
 | 0 Ground truth | Is the data split honest? | ✅ done |
 | 1 Correctness | Does the code compute what the paper's authors' code computes? | ✅ done |
 | 2 Training | Which training tricks actually help, and by how much (beyond seed noise)? | ✅ done: deployment candidate shift + specaug + noise (Session 6) |
-| 3 Deployment | Does it work in a browser, on real people's microphones? | 🔄 built (Session 7); first real-user test 34/35 (Session 8); hosting next |
+| 3 Deployment | Does it work in a browser, on real people's microphones? | ✅ live at dhaaivat.github.io/TinyAudioTransformer (Session 9) |
 
 ---
 
@@ -287,6 +287,16 @@ It records what the model is for and not for, the numbers (clean and noisy, per-
 - **It is not an accuracy estimate.** With 35 trials, the exact 95% interval for 34/35 is **85.1–99.9%**. That's consistent with the test set's 93.4% and says little more. One speaker in one quiet session doesn't cover accents, noise or other microphones.
 
 **Lesson: count the trials before celebrating a number.** 97.1% sounds better than the test set's 93.4%, but with n = 35 the two can't be told apart. The value of this run is *qualitative* (the pipeline works, and the errors are the expected ones). Getting a *quantitative* real-world number needs more people, rooms and devices.
+
+---
+
+## Session 9 (2026-11-05): going live
+
+- **Repo:** the rebuilt project was pushed as one commit on top of the original July 2025 history, so nothing old is lost. Training outputs, datasets and zips stay out of git, and the site only needs `web/`. New: `README.md` (for both non-technical and technical readers, with figures from `docs/make_figures.py`) and an MIT `LICENSE`.
+- **Caught before publishing:** the ONNX exporter embeds a Python stack trace in every graph node, including local file paths (username, folder layout). `export_onnx.py` now strips that debug info. The model shrank from 5.1 to 4.7 MB with identical outputs (re-verified on 8,000 clips).
+  *Lesson:* look inside the artifacts you publish (`strings model.onnx | grep Users/`), not just at your source code.
+- **Hosting:** GitHub Pages, deployed by a GitHub Actions workflow from `web/`. The first deploy failed with "Get Pages site failed / Not Found" because Pages has to be switched on once in the repo (Settings → Pages → Source: GitHub Actions). After that, a manual re-run deployed it. Every push that touches `web/` now redeploys automatically, and the test suite runs on every push.
+- **Live:** https://dhaaivat.github.io/TinyAudioTransformer/
 
 ---
 

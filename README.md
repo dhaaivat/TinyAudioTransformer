@@ -14,7 +14,7 @@
 
 </div>
 
-Say **"yes"**, **"stop"**, **"marvin"** or any of 35 words. The model listens to one second of audio and tells you which word it heard, with how sure it is. It has **0.85 million parameters**, about 100× smaller than the research model it's based on. It was trained from scratch on 85,000 recordings, and it runs **entirely on your device**: your voice never leaves the browser.
+Say **"yes"**, **"stop"**, **"marvin"** or any of 35 words. The model listens to one second of audio and tells you which word it heard, with how sure it is. It has **0.85 million parameters**, about 100× smaller than [AST](https://arxiv.org/abs/2104.01778) (MIT's Audio Spectrogram Transformer, ~87M parameters), the research model it's based on. It was trained from scratch on 85,000 recordings, and it runs **entirely on your device**: your voice never leaves the browser.
 
 <p align="center">
   <picture>
