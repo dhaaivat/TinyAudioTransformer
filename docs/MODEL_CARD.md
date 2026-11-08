@@ -12,6 +12,14 @@ A 0.85M-parameter audio transformer that recognises one of 35 English command wo
 | Words | backward, bed, bird, cat, dog, down, eight, five, follow, forward, four, go, happy, house, learn, left, marvin, nine, no, off, on, one, right, seven, sheila, six, stop, three, tree, two, up, visual, wow, yes, zero |
 
 ## Architecture
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/architecture_dark.png">
+  <img src="assets/architecture_light.png" alt="Architecture diagram. Front-end: waveform [B,16000] → framing [B,98,400] → DC removal, pre-emphasis, Hann window → FFT power [B,98,257] → 128-filter mel filterbank [B,98,128] → log and pad [B,128,128]. Tokens: normalise → [B,1,128,128] → Conv2d 16×16 stride 10 patch embedding [B,128,12,12] → 144 tokens [B,144,128] → add [CLS] and positions [B,145,128]. Encoder: 4 pre-norm blocks of LayerNorm, 4-head self-attention, residual, LayerNorm, MLP 128→512→128, residual. Head: final LayerNorm, take [CLS] [B,128], linear → logits [B,35], softmax." width="100%">
+</picture>
+
+*Generated from the code by `docs/make_architecture.py`: shapes and parameter counts are measured by running the real modules.*
+
 - **Features:** Kaldi log-mel filterbank with 25 ms Hann windows every 10 ms, 128 mel bins, pre-emphasis 0.97. That gives 98 frames per second, zero-padded to 128, normalised as (x − mean)/(2·std) with training-set statistics.
 - **Model:** AST-style. The spectrogram is cut into overlapping 16×16 patches (stride 10, 144 patches). Then [CLS] + learned positions, 4 pre-norm transformer blocks (dim 128, 4 heads, MLP ×4), LayerNorm, and a linear head.
 - **Verified against the reference:** with the AST authors' fine-tuned weights loaded, the same modules reproduce Hugging Face AST's logits to within 1e-3 (`tests/test_parity_ast.py`). The ONNX graph reproduces the PyTorch training pipeline to within 3e-5 in logits, with identical predictions on 8,000 real clips (`export_onnx.py`, `tests/test_export.py`).
